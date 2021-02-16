@@ -52,25 +52,6 @@ export const outcome = (state = {
         return {
           ...state,
           isFetching: true,
-          filters: state.filters.map((filter) =>{
-            if(filter.field_name === Object.keys(action.meta.params)[0]){
-              return {
-                ...filter,
-                input: filter.input.map((dataInput) => {
-                  if(dataInput.id === parseInt(Object.values(action.meta.params)[0])){
-                    return {
-                      ...dataInput,
-                      active: true,
-                    }
-                  }
-                  return dataInput
-                }),
-                filter_triggered: true
-              }
-            }
-            return filter;
-          },
-          ),
         }
       case 'RECEIVE_PRODUCTS':
         console.log('act in receive',Object.values(action.meta.params)[0])
@@ -84,6 +65,26 @@ export const outcome = (state = {
             loadMore: action.meta.loadMore,
             params: action.meta.params
           },
+          filters: state.filters.map((filter) =>{
+            if(filter.field_name === Object.keys(action.meta.params)[0]){
+              return {
+                ...filter,
+                filter_triggered: true,
+                input: filter.input.map((dataInput) => {
+                  if(dataInput.id === parseInt(Object.values(action.meta.params)[0])){
+                    return {
+                      ...dataInput,
+                      active: true,
+                    }
+                  }
+                  return dataInput
+                }),
+                
+              }
+            }
+            return filter;
+          },
+          ),
           isFetching: false,
           data: action.meta.loadMore ? [...state.data, ...action.data]: action.data,
 

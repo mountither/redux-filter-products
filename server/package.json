@@ -6,7 +6,9 @@
   "scripts": {
     "server": "nodemon index.js",
     "client": "npm start --prefix ../client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev-mac": "concurrently \"npm run server\" \"npm run start-mac --prefix ../client\"",
+    "dev-win": "concurrently \"npm run server\" \"npm run start-win --prefix ../client\""
+
   },
   "keywords": [],
   "author": "",

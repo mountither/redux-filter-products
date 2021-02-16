@@ -23,13 +23,6 @@ export const clearFilters = () => ({
 export const requestProducts = (filters) =>({
   type: 'REQUEST_PRODUCTS',
   url: filters.params,
-  meta: {
-    limit: filters.config.limit,
-    skip: filters.config.skip,
-    loadMore: filters.config.loadMore,
-    page: filters.config.page,
-    params: filters.config.params
-  },
 });
 
 
@@ -50,8 +43,8 @@ export const receiveProducts = (json, filters) =>({
 export const fetchProducts = (filters) => (dispatch) => {
   //dispatch a request for products
   dispatch(requestProducts(filters))
-  // fetch the json product from server - port 8000 
-  return fetch(`http://192.168.0.65:8000/api/products/?${filters.params}&skip=${filters.config.skip}&limit=${filters.config.limit}`)
+  // fetch the json product from server - port 8000
+  return fetch(`${process.env.REACT_APP_SERVER}:8000/api/products/?${filters.params}&skip=${filters.config.skip}&limit=${filters.config.limit}`)
   .then(response => response.json())
   .then(json => {dispatch(receiveProducts(json, filters));
     // dispatch(urlChange(filters.params));
