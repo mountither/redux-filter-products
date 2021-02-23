@@ -8,7 +8,10 @@
     "client": "npm start --prefix ../client",
     "dev-mac": "concurrently \"npm run server\" \"npm run start-mac --prefix ../client\"",
     "dev-win": "concurrently \"npm run server\" \"npm run start-win --prefix ../client\""
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5748739d08140cb22bd7d6a31a48514da5073396
   },
   "keywords": [],
   "author": "",

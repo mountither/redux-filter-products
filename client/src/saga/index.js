@@ -1,7 +1,13 @@
+<<<<<<< HEAD
 import { takeEvery, put, select, all, call } from 'redux-saga/effects';
 import { useLocation} from 'react-router-dom'
 import {fetchProductsIfNeeded, toggleFilter, urlChange} from '../actions';
 import { filterInfo } from '../filters/productFilters';
+=======
+import { takeEvery, put, select, all, call, fork } from 'redux-saga/effects';
+import { useLocation} from 'react-router-dom'
+import {fetchProductsIfNeeded, fetchProducts, initFilters,urlChange} from '../actions';
+>>>>>>> 5748739d08140cb22bd7d6a31a48514da5073396
 import qs from "query-string";
 
 // this solves the issue of taking query direct from the window location, 
@@ -11,6 +17,7 @@ import qs from "query-string";
 function* initApp(action) {
     // url location is extracted (select) from the state.router 
 
+<<<<<<< HEAD
     const params = new URLSearchParams(window.location.search);
     console.log('PARAMS',params.toString())
 
@@ -18,11 +25,24 @@ function* initApp(action) {
 
     // create an array of the items found in url.
     const filters = Array.from(params.entries()).map((filter) => { return {id: parseInt(filter[1]), field:filter[0]}});
+=======
+    // const params = new URLSearchParams(window.location.search);
+    // console.log('PARAMS',qs.exclude(window.location.search, ['page']))
+    const queryURL = qs.parse(window.location.search,{parseNumbers: true, arrayFormat: 'comma'});
+    // const urlString = qs.stringify(window.location.search, {arrayFormat: 'comma', skipNull: true, skipEmptyString: true})
+
+    const queryToServer = qs.exclude(window.location.search, ['page']);
+    const pageNo = parseInt(queryURL.page) || 1;
+
+    // create an array of the items found in url.
+    // const filters = Array.from(params.entries()).map((filter) => { return {id: parseInt(filter[1]), field:filter[0]}});
+>>>>>>> 5748739d08140cb22bd7d6a31a48514da5073396
     // store the state router location retrieved from the url. 
     
     // problem:
             // when getting old state, the func iterates twice 
             // intial state is used for filters. 
+<<<<<<< HEAD
     // yield all(filters.map((filter) =>  {return put(toggleFilter(filter.id, filter.field, params.toString()))}));
     console.log('filters', qs.parse(params.toString()))
     // yield put(urlChange(params.toString()))
@@ -37,6 +57,34 @@ function* initApp(action) {
       }}))
 
 
+=======
+            // yield all(filters.map((filter) =>  {return put(toggleFilter(filter.id, filter.field, params.toString()))}));
+            
+    // yield put(urlChange(window.location.search))
+            
+    if(Object.keys(queryURL).length> 0){
+
+        Object.keys(queryURL).map( field =>
+            queryURL[field]= Array.isArray(queryURL[field]) ? queryURL[field] : [queryURL[field]]
+        )
+        
+        yield put(initFilters(queryURL, window.location.search))
+    }        
+
+    // yield put(fetchProductsIfNeeded({
+    //     query: window.location.search,
+    //     config: {
+    //         skip: 0,
+    //         limit: 4 * pageNo,
+    //         page: pageNo,
+    //         loadMore:false,
+    //         // params: queryURL // (action) should be removed if not used in reducer
+    //     }
+    // }))
+    
+  
+    
+>>>>>>> 5748739d08140cb22bd7d6a31a48514da5073396
 
     return;
 }
