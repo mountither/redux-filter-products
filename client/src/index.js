@@ -3,14 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-<<<<<<< HEAD
-import store, {history} from './store'
-import {Provider} from 'react-redux'
-import { ConnectedRouter } from "connected-react-router";
-=======
 import store from './store'
 import {Provider} from 'react-redux'
->>>>>>> 5748739d08140cb22bd7d6a31a48514da5073396
 
 
 ReactDOM.render(
