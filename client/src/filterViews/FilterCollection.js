@@ -10,7 +10,6 @@ import 'antd/dist/antd.css'
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import {useDidMount} from "./utils/renderCheck";
-import { fetchedProducts } from "../reducers/products";
 import qs from 'query-string'
 
 let render = 1;

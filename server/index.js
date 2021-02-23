@@ -2,10 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const Product = require('./data/productsDB')
-
+const qs = require('query-string')
 
 app.use(bodyParser.json());
-
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req,res,next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -18,33 +18,34 @@ app.use((req,res,next) => {
 });
 
 
-app.post('/api/products/', async (req, res) =>{
+app.get('/api/products/', async (req, res) =>{
 
-    try {
+  try {
     const getFiltered = {};
-  
-    let limit = req.body.limit ? parseInt(req.body.limit) : 100;
-    let skip = parseInt(req.body.skip);
+    const query = qs.parse(req._parsedUrl.search, {parseNumbers: true, arrayFormat:'comma'})
+    let limit = parseInt(req.body.limit) || 4;
+    let skip = parseInt(req.body.skip) || 0;
     //key : "brand" or "finish" or ...
-    for (const key in req.body.filters) {
+    for (const key in query) {
       
-      if (req.body.filters[key].length > 0) {
+      if (key !== 'limit'&& key !== 'skip') {
           // req.body.filters[key] : [1, 2, 3]
-  
           if(key === "hair"){
             getFiltered[key] = {
               // hair field includes an array of many elements (need to find either elem)
-              $in: req.body.filters[key]
+              $in: query[key]
             }
   
           }else {
   
-            getFiltered[key] = req.body.filters[key];
+            getFiltered[key] = query[key];
           }
   
       }
       
     }
+
+    console.log(getFiltered);
   
     const prods= await Product.find(getFiltered).skip(skip).limit(limit);
     const count = await Product.countDocuments(getFiltered);

@@ -1,4 +1,3 @@
-import uuid from 'react-uuid'
 
 export const toggleFilter = (id, name, url, deselect) => ({
   type: 'TOGGLE_FILTER',

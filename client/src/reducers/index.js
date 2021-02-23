@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux';
-import filters from './filters';
-import {outcome, fetchedProducts, filterUrl} from './products';
+import {outcome, fetchedProducts, filterUrl} from './ProductFilterReducer';
 
 const  allReducers = combineReducers({ 
     outcome,

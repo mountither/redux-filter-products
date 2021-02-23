@@ -1,7 +1,6 @@
 import { takeEvery, put, select, all, call, fork } from 'redux-saga/effects';
 import { useLocation} from 'react-router-dom'
 import {fetchProductsIfNeeded, fetchProducts, initFilters,urlChange} from '../actions';
-import { filterInfo } from '../filters/productFilters';
 import qs from "query-string";
 
 // this solves the issue of taking query direct from the window location, 

@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux';
-import {filterInfo, normalizedData} from '../filters/productFilters'
-import filters from './filters';
+import {filterInfo, normalizedData} from '../filters'
 
 
 export const filterUrl = (state = '', action) => {

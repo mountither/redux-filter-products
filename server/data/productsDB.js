@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const conn = mongoose.createConnection('mongodb://192.168.0.14:27017/gcb-products',
+const conn = mongoose.createConnection('mongodb://127.0.0.1:27017/gcb-products',
   {
   useNewUrlParser: true,
   useUnifiedTopology: true
