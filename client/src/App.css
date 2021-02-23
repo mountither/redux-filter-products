@@ -51,16 +51,3 @@ li {
   border-bottom: 1px solid red !important;
 }
 
-
-.reset-container{
-  position: relative;
-
-}
-.anchor-reset{
-  position: absolute;
-  right: 3.5px;
-  height: 15px;
-  width: 15px;
-  color: get-color(alert, warning);
-  cursor: pointer;
-}
