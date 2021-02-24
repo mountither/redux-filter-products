@@ -23,8 +23,8 @@ app.get('/api/products/', async (req, res) =>{
   try {
     const getFiltered = {};
     const query = qs.parse(req._parsedUrl.search, {parseNumbers: true, arrayFormat:'comma'})
-    let limit = parseInt(req.body.limit) || 4;
-    let skip = parseInt(req.body.skip) || 0;
+    let limit = parseInt(query.limit) || 4;
+    let skip = parseInt(query.skip) || 0;
     //key : "brand" or "finish" or ...
     for (const key in query) {
       
