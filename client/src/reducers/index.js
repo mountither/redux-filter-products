@@ -3,8 +3,7 @@ import {outcome, fetchedProducts, filterUrl} from './ProductFilterReducer';
 
 const  allReducers = combineReducers({ 
     outcome,
-    filterUrl,
-    fetchedProducts
+    filterUrl
 });
 
 export default allReducers;

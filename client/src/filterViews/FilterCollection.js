@@ -4,7 +4,7 @@ import CheckboxFilter from './CheckboxFilter'
 import {useSelector, useDispatch} from 'react-redux'
 import {increment} from '../actions-example'
 import { Checkbox} from 'antd';
-import { toggleFilter,fetchProductsIfNeeded, urlChange, fetchProducts} from '../actions';
+import { toggleFilter,fetchProductsIfNeeded, urlChange, browserChange} from '../actions';
 import { Link, useHistory, useLocation, Redirect} from 'react-router-dom'
 import 'antd/dist/antd.css'
 import { LoadingOutlined } from '@ant-design/icons';
@@ -19,6 +19,7 @@ const resetPageNo = 1;
 
 const FilterCollection = () =>{
   const history = useHistory()
+  const location = useLocation();
   // const query = new URLSearchParams(history.location.search)
 
 
@@ -31,15 +32,14 @@ const FilterCollection = () =>{
   const pageNo = parseInt(parsedQuery.page) || 1;
 
   
-  const {filterUrl, outcome, fetchedProducts} = state
-  
-  
-  const url1 = qs.stringify(outcome.meta.params, {arrayFormat: 'comma', skipNull: true, skipEmptyString: true});
-  const url = qs.exclude('?'+url1, ['page']);
-
-  console.log('URLLLLL', url);
-
+  const {outcome} = state
   const {isFetching, filters, data, meta} = outcome 
+
+  // const url = qs.stringify(meta.params,
+  //   {arrayFormat: 'comma', skipNull: true, skipEmptyString: true});
+
+  // const url = qs.exclude('?'+url1, ['page']);
+
   // const {isFetching, data, filters, meta} = fetchedProducts[window.location.search]
   // || 
   // { 
@@ -107,23 +107,25 @@ const FilterCollection = () =>{
     //   config: {skip: 0, limit: viewLimit, page: resetPageNo,
     // }
     // }));
+      dispatch({type:"INIT_PRODUCTS"});
     }, []);
     
 
   console.log('PARSE fasD q', parsedQuery)
 
-  useEffect(()=> {
+  // useEffect(()=> {
+  
+  //   if(!isFetching){
+  //     history.push({
+  //       pathname: '/products/',
+  //       search: url,
+  //       state: outcome
+  //     });
+  //   }
     
-    dispatch(fetchProductsIfNeeded({query: url,
-    config: {skip: 0, limit: viewLimit, limit: 4 * pageNo, page: pageNo
-    }}));
+  // }, [meta.params])
 
-    history.push({
-      pathname: '/products/',
-      search: url1
-    })
-    
-  }, [meta.params])
+  console.log('HISTORY!! ',window.history);
 
 const [ locationKeys, setLocationKeys ] = useState([])
 
@@ -154,12 +156,13 @@ const query = '?'+qs.stringify(history.location.search, {arrayFormat: 'comma', s
           console.log('the location keys in forward state: ', location.key)
           console.log("foward", locationKeys)
           // redux must back to the most recent state
-          console.log(window.location.search);
+          console.log('hist state !!!',window.history.state);
 
           // CALL WINDOW_NAV ACTION. old state will be used. Change will happen in this component. 
           // Id required to identify what location (browser) user is in.
 
           // dispatch(fetchProductsIfNeeded(window.location.search))
+          dispatch(browserChange(window.history.state))
         }
         else{
           
@@ -168,8 +171,10 @@ const query = '?'+qs.stringify(history.location.search, {arrayFormat: 'comma', s
           console.log('the location keys in back state: ', location.key)
 
           //redux must go back to the previous state. type : PREVIOUS_NAV_STATE
-          console.log('WINOD LOCLA',window.location.search);
-          // dispatch(fetchProductsIfNeeded(window.location.search))
+          console.log('hist state !!!',window.history.state);
+
+          dispatch(browserChange(window.history.state))
+          //dispatch(fetchProductsIfNeeded(window.location.search))
   
         }
     }
@@ -250,12 +255,14 @@ const handleChange = (value, field) => {
   
 
 
-  dispatch(toggleFilter(value.id, field, url,
-    value.active ? true : false,
-  ));
+  dispatch(toggleFilter(value.id, field,
+  value.active ? true : false,));
   
 
-  
+  dispatch(fetchProductsIfNeeded({
+  config: {skip: 0, limit: viewLimit, page: pageNo
+  }}));
+
   // the checkbox activ. is lagging due to prev store state. 
   // console.log('activity for ', field, value.id, value.active)
 

@@ -22,6 +22,6 @@ composeEnhancers(applyMiddleware(...middleware)),
 
 sagaMiddleware.run(mySaga);
 
-store.dispatch({type:"INIT_PRODUCTS"});
+
 
 export default store;

@@ -1,15 +1,16 @@
+import qs from 'query-string'
 
-export const toggleFilter = (id, name, url, deselect) => ({
+
+export const toggleFilter = (id, name, deselect) => ({
   type: 'TOGGLE_FILTER',
   id: id, 
   field:name,
-  url: url,
   deselect: deselect
 });
 
-export const urlChange = (url) => ({
+const urlChange = (url) => ({
   type:"URL_CHANGE",
-  url: url
+  url: url,
 })
 
 export const clearFilters = () => ({
@@ -21,17 +22,15 @@ export const browserChange = (result) => ({
   oldState: result
 })
 
-export const initFilters = (params, url) => ({
+export const initFilters = (params) => ({
   type: 'INIT_FILTER_UI',
   urlFilters: params,
-  url: url
 })
 
 //make url persist in store. action => "URL_CHANGE"
 
-export const requestProducts = (filters) =>({
-  type: 'REQUEST_PRODUCTS',
-  url: filters.query,
+export const requestProducts = () =>({
+  type: 'REQUEST_PRODUCTS'
 });
 
 export const receiveProducts = (json, filters, results) =>({
@@ -43,34 +42,43 @@ export const receiveProducts = (json, filters, results) =>({
     skip: filters.config.skip,
     loadMore: filters.config.loadMore,
     page: filters.config.page,
-    params: results.meta.params,
-    ui: results.filters,
-  },
-  url: filters.query
+    params: results.meta.params
+  }
 });
 
-export const fetchProducts = (filters, ui) => (dispatch) => {
-  //dispatch a request for products
-  console.log('UIIIII', ui);
-  dispatch(requestProducts(filters))
-  // fetch the json product from server - port 8000
-  return fetch(`${process.env.REACT_APP_SERVER}:8000/api/products/${filters.query ? filters.query : '?'}&skip=${filters.config.skip}&limit=${filters.config.limit}`)
-  .then(response => response.json())
-  .then(json => {dispatch(receiveProducts(json, filters, ui));
-    // dispatch(urlChange(filters.params));
-    console.log(json);
-  })
-  // the recieved json objects need to be sent to 
-  // dispatched to recieveProducts
+export const fetchProducts = (filters, state) => (dispatch) => {
+    // query manipualtion
+    const queryFilters = qs.stringify(state.meta.params,
+        {arrayFormat: 'comma', skipNull: true, skipEmptyString: true});
+
+    const url = `${process.env.REACT_APP_SERVER}:8000/api/products/?${queryFilters}
+    &skip=${filters.config.skip}&limit=${filters.config.limit}`
+    
+    
+    const queryToServer = qs.exclude(url, ['page']);
+
+    //dispatch a request for products
+    dispatch(requestProducts(filters))
+
+    // fetch the json product from server - port 8000
+    return fetch(queryToServer)
+    .then(response => response.json())
+    .then(json => {dispatch(receiveProducts(json, filters, state));
+        console.log(json);
+    dispatch(urlChange(queryFilters));
+
+    }).catch(error => console.log(error))
+    // the recieved json objects need to be sent to 
+    // dispatched to recieveProducts
 
 }
 
 export const shouldFetchProducts = (state, filters) => {
   // get the state of specific subreddit. 
-  const prods = state.fetchedProducts[filters.query]
+//   const prods = state.fetchedProducts[filters.query]
 
-  console.log('prods', state.fetchedProducts)
-  console.log('params in fe', filters.query)
+//   console.log('prods', state.fetchedProducts)
+//   console.log('params in fe', filters.query)
   return true
   // if (!prods) {
   //   // this occurs when posts are undefined.

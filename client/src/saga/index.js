@@ -28,6 +28,7 @@ function* initApp(action) {
             // yield all(filters.map((filter) =>  {return put(toggleFilter(filter.id, filter.field, params.toString()))}));
             
     // yield put(urlChange(window.location.search))
+
             
     if(Object.keys(queryURL).length> 0){
 
@@ -35,19 +36,17 @@ function* initApp(action) {
             queryURL[field]= Array.isArray(queryURL[field]) ? queryURL[field] : [queryURL[field]]
         )
         
-        yield put(initFilters(queryURL, window.location.search))
+        yield put(initFilters(queryURL))
     }        
 
-    // yield put(fetchProductsIfNeeded({
-    //     query: window.location.search,
-    //     config: {
-    //         skip: 0,
-    //         limit: 4 * pageNo,
-    //         page: pageNo,
-    //         loadMore:false,
-    //         // params: queryURL // (action) should be removed if not used in reducer
-    //     }
-    // }))
+    yield put(fetchProductsIfNeeded({
+        // query: queryToServer,
+        config: {
+            skip: 0,
+            limit: 4 * pageNo,
+            page: pageNo
+        }
+    }))
     
   
     
