@@ -1,15 +1,15 @@
 import { combineReducers } from 'redux';
 import {filterInfo, normalizedData} from '../filters'
+import history from '../utils/history'
 
-
-export const filterUrl = (state = '', action) => {
-  switch (action.type) {
-    case "URL_CHANGE":
-      return action.url
-    default:
-      return state
-  }
-}
+// export const filterUrl = (state = '', action) => {
+//   switch (action.type) {
+//     case "URL_CHANGE":
+//       return action.url
+//     default:
+//       return state
+//   }
+// }
 
 export const outcome = (state = {
   isFetching: false,
@@ -125,13 +125,13 @@ export const outcome = (state = {
         }
         case 'WINDOW_NAV':
             console.log('ACT OLD STATE',state);
-            return action.oldState && Object.keys(action.oldState).length > 2 ? action.oldState : state;
+            return action.oldState && Object.keys(action.oldState).length ? action.oldState : state;
         case 'URL_CHANGE':
-            console.log('STATE IN URL CHNA',state);
-            if(action.url && window.history){
-                window.history.pushState({...state}, '', action.url)
-            }
-            return state
+        //     console.log('STATE IN URL CHNA',state);
+            // if(action.url && window.history){
+                history.push({pathname: '/products', search: action.url, state:state})
+            // }
+            // return state
        
 
         default:

@@ -110,9 +110,9 @@ const FilterCollection = () =>{
      
       dispatch({type:"INIT_PRODUCTS"});
       
-      window.onpopstate = () => {
-          dispatch(browserChange(window.history.state))
-      }
+      // window.onpopstate = () => {
+      //     dispatch(browserChange(window.history.state))
+      // }
     }, []);
     
 
@@ -130,64 +130,65 @@ const FilterCollection = () =>{
     
   // }, [meta.params])
 
-  console.log('HISTORY!! ',window.history);
+  console.log('HISTORY!! ',history);
 
 const [ locationKeys, setLocationKeys ] = useState([])
 
 
 
-// useEffect(() => {
+useEffect(() => {
     
-//     // return history.listen((location, action) => {
+    return history.listen((location, action) => {
 
-//       // console.log('location in filt: ',location)
-//       if (action === 'PUSH') {
-//         setLocationKeys([ location.key ])
-//       }
+      // console.log('location in filt: ',location)
+      if (action === 'PUSH') {
+        setLocationKeys([ location.key ])
 
-//       // currently/intialNav: [] - when back is hit: ['xxxx'] - back again: ['yyyy', 'xxxx']
-//       // 'xxxx' key represents the intial point at which the back button is clicked. --back---'xxxx'-intial
-//       // - foward: if the 2nd elem is equal to the current location key => go forward
+      }
 
-//       // scenrio 
-//         // user clicks back btn, that appends a loc key in LocationKey arr. 
-//         // now, user wants to go foward after the prev back action. 
-//           // this will bypass the first condition, since theres only 1 elem. 
+      // currently/intialNav: [] - when back is hit: ['xxxx'] - back again: ['yyyy', 'xxxx']
+      // 'xxxx' key represents the intial point at which the back button is clicked. --back---'xxxx'-intial
+      // - foward: if the 2nd elem is equal to the current location key => go forward
 
-//         // if intialising with a random key. the first back will append key in front. 
+      // scenrio 
+        // user clicks back btn, that appends a loc key in LocationKey arr. 
+        // now, user wants to go foward after the prev back action. 
+          // this will bypass the first condition, since theres only 1 elem. 
 
-//       if (action === 'POP') {
-//         if (locationKeys[1] === location.key) {
-//           setLocationKeys(([ _, ...keys ]) => keys)
-//           console.log('the location keys in forward state: ', location.key)
-//           console.log("foward", locationKeys)
-//           // redux must back to the most recent state
-//           console.log('hist state !!!',window.history.state);
+        // if intialising with a random key. the first back will append key in front. 
 
-//           // CALL WINDOW_NAV ACTION. old state will be used. Change will happen in this component. 
-//           // Id required to identify what location (browser) user is in.
+      if (action === 'POP') {
+        if (locationKeys[1] === location.key) {
+          setLocationKeys(([ _, ...keys ]) => keys)
+          console.log('the location keys in forward state: ', location.key)
+          console.log("foward", locationKeys)
+          // redux must back to the most recent state
+          console.log('hist state !!!',history.state);
 
-//           // dispatch(fetchProductsIfNeeded(window.location.search))
-//           dispatch(browserChange(window.history.state))
-//         }
-//         else{
+          // CALL WINDOW_NAV ACTION. old state will be used. Change will happen in this component. 
+          // Id required to identify what location (browser) user is in.
+
+          // dispatch(fetchProductsIfNeeded(window.location.search))
+          dispatch(browserChange(history.location.state))
+        }
+        else{
           
-//           setLocationKeys((keys) => [ location.key, ...keys ])
+          setLocationKeys((keys) => [ location.key, ...keys ])
         
-//           console.log('the location keys in back state: ', location.key)
+          console.log('the location keys in back state: ', location.key)
 
-//           //redux must go back to the previous state. type : PREVIOUS_NAV_STATE
-//           console.log("back", locationKeys)
+          //redux must go back to the previous state. type : PREVIOUS_NAV_STATE
+          console.log("back", locationKeys)
 
-//           console.log('hist state !!!',window.history.state);
+          console.log('hist state !!!',history.state);
 
-//           dispatch(browserChange(window.history.state))
-//           //dispatch(fetchProductsIfNeeded(window.location.search))
+          dispatch(browserChange(history.location.state))
+          //dispatch(fetchProductsIfNeeded(window.location.search))
   
-//         }
-//     }
-//     // })
-//   }, [locationKeys])
+        }
+    }
+    })
+  }, [locationKeys])
 
  
   const onLoadMore = () => {

@@ -1,4 +1,6 @@
 import qs from 'query-string'
+import { actionChannel } from 'redux-saga/effects';
+import history from '../utils/history'
 
 
 export const toggleFilter = (id, name, deselect) => ({
@@ -54,8 +56,9 @@ export const fetchProducts = (filters, state) => (dispatch) => {
     const url = `${process.env.REACT_APP_SERVER}:8000/api/products/?${queryFilters}
     &skip=${filters.config.skip}&limit=${filters.config.limit}`
     
-    
+    // `${queryFilters ? '?'+queryFilters: ''}`
     const queryToServer = qs.exclude(url, ['page']);
+    dispatch(urlChange(`${queryFilters ? '?'+queryFilters: ''}`))
 
     //dispatch a request for products
     dispatch(requestProducts(filters))
@@ -63,9 +66,15 @@ export const fetchProducts = (filters, state) => (dispatch) => {
     // fetch the json product from server - port 8000
     return fetch(queryToServer)
     .then(response => response.json())
-    .then(json => {dispatch(receiveProducts(json, filters, state));
+    .then(json => {
+        
+        dispatch(receiveProducts(json, filters, state));
         console.log(json);
-    dispatch(urlChange(`/products/${queryFilters ? '?'+queryFilters: ''}`));
+        // if (state.data){
+        // history.push({pathname: '/products', 
+        //             search: `${queryFilters ? '?'+queryFilters: ''}`, 
+        //             state: state
+        // })
 
     }).catch(error => console.log(error))
     // the recieved json objects need to be sent to 
