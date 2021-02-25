@@ -41,32 +41,32 @@ export const outcome = (state = {
                 }
             },
             filters: state.filters.map( filter => {
-            const foundField = Object.keys(action.urlFilters).find(field => 
-                field === filter.field_name
-            )
-            if(foundField){
-                return{
-                ...filter,
-                filter_triggered: true,
-                input: filter.input.map((dataInput) => {
-                    // console.log('ACT FILT',action.urlFilters[filter.field_name] === dataInput.id);
+                const foundField = Object.keys(action.urlFilters).find(field => 
+                    field === filter.field_name
+                )
+                if(foundField){
+                    return{
+                    ...filter,
+                    // filter_triggered: action.urlFilters[field].length>0? true,
+                    input: filter.input.map((dataInput) => {
+                        // console.log('ACT FILT',action.urlFilters[filter.field_name] === dataInput.id);
 
-                const foundInput = Array.isArray(action.urlFilters[filter.field_name]) ? 
-                    action.urlFilters[filter.field_name].find((input) => input == dataInput.id) 
-                    : 
-                    action.urlFilters[filter.field_name] === dataInput.id;
+                    const foundInput = Array.isArray(action.urlFilters[filter.field_name]) ? 
+                        action.urlFilters[filter.field_name].find((input) => input == dataInput.id) 
+                        : 
+                        action.urlFilters[filter.field_name] === dataInput.id;
 
-                if(foundInput){
-                    return {
-                    ...dataInput,
-                    active: true,
+                    if(foundInput){
+                        return {
+                        ...dataInput,
+                        active: true,
+                        }
+                    }
+                    return dataInput
+                    }),
                     }
                 }
-                return dataInput
-                }),
-                }
-            }
-            return filter
+                return filter
             }),
         }
         case 'TOGGLE_FILTER':
@@ -94,7 +94,7 @@ export const outcome = (state = {
                 }
                 return dataInput
                 }),
-                filter_triggered: true
+                // filter_triggered: true
             }
             }
             return filter;
@@ -124,16 +124,15 @@ export const outcome = (state = {
             data: action.meta.loadMore ? [...state.data, ...action.data]: action.data,
         }
         case 'WINDOW_NAV':
-            console.log('ACT OLD STATE',action.oldState);
-            return action.oldState ? action.oldState : state;
+            console.log('ACT OLD STATE',state);
+            return action.oldState && Object.keys(action.oldState).length > 2 ? action.oldState : state;
         case 'URL_CHANGE':
             console.log('STATE IN URL CHNA',state);
-            // if(action.url && window.history){
-            window.history.pushState(state, '', '/products/?'+action.url)
-        // }
-        // else{
-        //     return state
-        // }
+            if(action.url && window.history){
+                window.history.pushState({...state}, '', action.url)
+            }
+            return state
+       
 
         default:
         return state

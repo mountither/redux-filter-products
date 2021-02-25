@@ -4,6 +4,9 @@ import FilterCollection from './filterViews/FilterCollection'
 import { Switch, Route, Router, Link} from 'react-router-dom';
 import history from './utils/history'
 import { connect } from "react-redux";
+import store from './store'
+
+
 
 
 function App() {
@@ -11,8 +14,10 @@ function App() {
     <div className="App">
       <Router history={history}>
         <Switch>
-          <Route path='/products' render={() => <FilterCollection />}/> 
-          <Route path='/' render={() => <Link to='/products'>Products</Link>}/>      
+          <Route exact path='/' render={() => <Link to="/products/">Products</Link>}/>      
+          <Route path='/products' 
+            render={() => <FilterCollection />}
+            /> 
 
         </Switch>
       </Router>

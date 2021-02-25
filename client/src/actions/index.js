@@ -65,7 +65,7 @@ export const fetchProducts = (filters, state) => (dispatch) => {
     .then(response => response.json())
     .then(json => {dispatch(receiveProducts(json, filters, state));
         console.log(json);
-    dispatch(urlChange(queryFilters));
+    dispatch(urlChange(`/products/${queryFilters ? '?'+queryFilters: ''}`));
 
     }).catch(error => console.log(error))
     // the recieved json objects need to be sent to 
