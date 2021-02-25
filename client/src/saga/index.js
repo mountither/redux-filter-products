@@ -30,14 +30,14 @@ function* initApp(action) {
     // yield put(urlChange(window.location.search))
 
             
-    // if(Object.keys(queryURL).length> 0){
+    if(Object.keys(queryURL).length> 0){
 
         Object.keys(queryURL).map( field =>
             queryURL[field]= Array.isArray(queryURL[field]) ? queryURL[field] : [queryURL[field]]
         )
         
         yield put(initFilters(queryURL))
-    // }        
+    }        
 
     yield put(fetchProductsIfNeeded({
         // query: queryToServer,

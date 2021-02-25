@@ -58,7 +58,6 @@ export const fetchProducts = (filters, state) => (dispatch) => {
     
     // `${queryFilters ? '?'+queryFilters: ''}`
     const queryToServer = qs.exclude(url, ['page']);
-    dispatch(urlChange(`${queryFilters ? '?'+queryFilters: ''}`))
 
     //dispatch a request for products
     dispatch(requestProducts(filters))
@@ -75,6 +74,8 @@ export const fetchProducts = (filters, state) => (dispatch) => {
         //             search: `${queryFilters ? '?'+queryFilters: ''}`, 
         //             state: state
         // })
+
+        console.log('HISTORY!! ',window.history);
 
     }).catch(error => console.log(error))
     // the recieved json objects need to be sent to 
@@ -104,8 +105,13 @@ export const fetchProductsIfNeeded = (filters) => (dispatch, getState) => {
   // the getState arg is retreived from the state inside component
   // at the time of this fn's execution.
   // console.log('filters',filters);
+  const queryFilters = qs.stringify(getState().outcome.meta.params,
+    {arrayFormat: 'comma', skipNull: true, skipEmptyString: true});
   if (shouldFetchProducts(getState(), filters)) {
     // dispatch(toggleFilter(filters.config.id, filters.config.field, filters.query))
     dispatch(fetchProducts(filters, getState().outcome))
+    if(getState().outcome.data !== []){
+    dispatch(urlChange(`${queryFilters ? '?'+queryFilters: ''}`))
+    }
   }
 }

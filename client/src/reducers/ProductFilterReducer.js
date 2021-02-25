@@ -27,6 +27,11 @@ export const outcome = (state = {
       hold: [],
       hair: [],
     }
+    // params: filterInfo.map(filterType => {
+    //     return {
+    //         [filterType.field_name] : []
+    //     }
+    // })
   },
 }, action) => {
     switch (action.type) {
@@ -124,14 +129,15 @@ export const outcome = (state = {
             data: action.meta.loadMore ? [...state.data, ...action.data]: action.data,
         }
         case 'WINDOW_NAV':
-            console.log('ACT OLD STATE',state);
+            // console.log('ACT OLD STATE',state);
             return action.oldState && Object.keys(action.oldState).length ? action.oldState : state;
         case 'URL_CHANGE':
         //     console.log('STATE IN URL CHNA',state);
-            // if(action.url && window.history){
-                history.push({pathname: '/products', search: action.url, state:state})
-            // }
-            // return state
+            if(action.url && window.history){
+                // history.push({pathname: '/products', search: action.url, state:state})
+                window.history.pushState({state: {...state}}, '', action.url)
+            }
+            return state
        
 
         default:

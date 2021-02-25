@@ -4,7 +4,7 @@ import CheckboxFilter from './CheckboxFilter'
 import {useSelector, useDispatch} from 'react-redux'
 import {increment} from '../actions-example'
 import { Checkbox} from 'antd';
-import { toggleFilter,fetchProductsIfNeeded, urlChange, browserChange} from '../actions';
+import { toggleFilter,fetchProductsIfNeeded, initFilters, browserChange} from '../actions';
 import { Link, useHistory, useLocation, Redirect} from 'react-router-dom'
 import 'antd/dist/antd.css'
 import { LoadingOutlined } from '@ant-design/icons';
@@ -24,8 +24,8 @@ const FilterCollection = () =>{
 
 
   // const queryURL = qs.parse(history.location.search, {parseNumbers: true, arrayFormat:'comma'})
-  const queryToServer = qs.exclude(history.location.search, ['page']);
-  const parsedQuery = qs.parse(history.location.search,{parseNumbers: true, arrayFormat: 'comma'})
+  const queryToServer = qs.exclude(window.location.search, ['page']);
+  const parsedQuery = qs.parse(window.location.search,{parseNumbers: true, arrayFormat: 'comma'})
   const dispatch = useDispatch()
   const didMount = useDidMount();
   const state = useSelector(state => state)
@@ -107,12 +107,16 @@ const FilterCollection = () =>{
     //   config: {skip: 0, limit: viewLimit, page: resetPageNo,
     // }
     // }));
-     
-      dispatch({type:"INIT_PRODUCTS"});
-      
-      // window.onpopstate = () => {
-      //     dispatch(browserChange(window.history.state))
-      // }
+
+    dispatch({type:"INIT_PRODUCTS"});
+
+      window.onpopstate = (e) => {
+        // console.log(e.currentTarget.location.search)
+          // if(e.state !== null){
+            dispatch(browserChange(e.state.state))
+          // }
+        
+      }
     }, []);
     
 
@@ -130,65 +134,69 @@ const FilterCollection = () =>{
     
   // }, [meta.params])
 
-  console.log('HISTORY!! ',history);
+  console.log('HISTORY!! ',window.history);
 
-const [ locationKeys, setLocationKeys ] = useState([])
+// const [ locationKeys, setLocationKeys ] = useState([])
 
 
 
-useEffect(() => {
+// useEffect(() => {
     
-    return history.listen((location, action) => {
+//     return history.listen((location, action) => {
 
-      // console.log('location in filt: ',location)
-      if (action === 'PUSH') {
-        setLocationKeys([ location.key ])
+//       // console.log('location in filt: ',location)
+//       if (action === 'PUSH') {
+//         setLocationKeys([ location.key ])
 
-      }
+//       }
 
-      // currently/intialNav: [] - when back is hit: ['xxxx'] - back again: ['yyyy', 'xxxx']
-      // 'xxxx' key represents the intial point at which the back button is clicked. --back---'xxxx'-intial
-      // - foward: if the 2nd elem is equal to the current location key => go forward
+//       // currently/intialNav: [] - when back is hit: ['xxxx'] - back again: ['yyyy', 'xxxx']
+//       // 'xxxx' key represents the intial point at which the back button is clicked. --back---'xxxx'-intial
+//       // - foward: if the 2nd elem is equal to the current location key => go forward
 
-      // scenrio 
-        // user clicks back btn, that appends a loc key in LocationKey arr. 
-        // now, user wants to go foward after the prev back action. 
-          // this will bypass the first condition, since theres only 1 elem. 
+//       // scenrio 
+//         // user clicks back btn, that appends a loc key in LocationKey arr. 
+//         // now, user wants to go foward after the prev back action. 
+//           // this will bypass the first condition, since theres only 1 elem. 
 
-        // if intialising with a random key. the first back will append key in front. 
+//         // if intialising with a random key. the first back will append key in front. 
 
-      if (action === 'POP') {
-        if (locationKeys[1] === location.key) {
-          setLocationKeys(([ _, ...keys ]) => keys)
-          console.log('the location keys in forward state: ', location.key)
-          console.log("foward", locationKeys)
-          // redux must back to the most recent state
-          console.log('hist state !!!',history.state);
+//       if (action === 'POP') {
+//         if (locationKeys[1] === location.key) {
+//           setLocationKeys(([ _, ...keys ]) => keys)
+//           console.log('the location keys in forward state: ', location.key)
+//           console.log("foward", locationKeys)
+//           // redux must back to the most recent state
+//           console.log('hist state !!!',history.state);
 
-          // CALL WINDOW_NAV ACTION. old state will be used. Change will happen in this component. 
-          // Id required to identify what location (browser) user is in.
+//           // CALL WINDOW_NAV ACTION. old state will be used. Change will happen in this component. 
+//           // Id required to identify what location (browser) user is in.
 
-          // dispatch(fetchProductsIfNeeded(window.location.search))
-          dispatch(browserChange(history.location.state))
-        }
-        else{
+//           // dispatch(fetchProductsIfNeeded(window.location.search))
+//           // dispatch(browserChange(history.location.state))
+//           dispatch(browserChange(window.history.state))
+
+//         }
+//         else{
           
-          setLocationKeys((keys) => [ location.key, ...keys ])
+//           setLocationKeys((keys) => [ location.key, ...keys ])
         
-          console.log('the location keys in back state: ', location.key)
+//           console.log('the location keys in back state: ', location.key)
 
-          //redux must go back to the previous state. type : PREVIOUS_NAV_STATE
-          console.log("back", locationKeys)
+//           //redux must go back to the previous state. type : PREVIOUS_NAV_STATE
+//           console.log("back", locationKeys)
 
-          console.log('hist state !!!',history.state);
+//           console.log('hist state !!!',history.state);
 
-          dispatch(browserChange(history.location.state))
-          //dispatch(fetchProductsIfNeeded(window.location.search))
+//           // dispatch(browserChange(history.location.state))
+//           dispatch(browserChange(window.history.state))
+
+//           //dispatch(fetchProductsIfNeeded(window.location.search))
   
-        }
-    }
-    })
-  }, [locationKeys])
+//         }
+//     }
+//     })
+//   }, [locationKeys])
 
  
   const onLoadMore = () => {
