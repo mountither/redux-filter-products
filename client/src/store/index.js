@@ -18,9 +18,9 @@ middleware.push(sagaMiddleware)
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(allReducers,
-composeEnhancers(applyMiddleware(...middleware)),
-);
-
+    composeEnhancers(applyMiddleware(...middleware)),
+    );
+    
 sagaMiddleware.run(mySaga);
 
 

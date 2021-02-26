@@ -15,7 +15,7 @@ function App() {
       <Router history={history}>
         <Switch>
           <Route exact path='/' render={() => <Link to="/products/">Products</Link>}/>      
-          <Route path='/products' 
+          <Route path='/products/' 
             render={() => <FilterCollection />}
             /> 
 

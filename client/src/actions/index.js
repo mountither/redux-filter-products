@@ -53,8 +53,7 @@ export const fetchProducts = (filters, state) => (dispatch) => {
     const queryFilters = qs.stringify(state.meta.params,
         {arrayFormat: 'comma', skipNull: true, skipEmptyString: true});
 
-    const url = `${process.env.REACT_APP_SERVER}:8000/api/products/?${queryFilters}
-    &skip=${filters.config.skip}&limit=${filters.config.limit}`
+    const url = `${process.env.REACT_APP_SERVER}:8000/api/products/?${queryFilters}&skip=${filters.config.skip}&limit=${filters.config.limit}`
     
     // `${queryFilters ? '?'+queryFilters: ''}`
     const queryToServer = qs.exclude(url, ['page']);
@@ -74,6 +73,8 @@ export const fetchProducts = (filters, state) => (dispatch) => {
         //             search: `${queryFilters ? '?'+queryFilters: ''}`, 
         //             state: state
         // })
+        console.log('QUERY FILT ',queryFilters);
+        dispatch(urlChange(queryFilters))
 
         console.log('HISTORY!! ',window.history);
 
@@ -105,13 +106,10 @@ export const fetchProductsIfNeeded = (filters) => (dispatch, getState) => {
   // the getState arg is retreived from the state inside component
   // at the time of this fn's execution.
   // console.log('filters',filters);
-  const queryFilters = qs.stringify(getState().outcome.meta.params,
-    {arrayFormat: 'comma', skipNull: true, skipEmptyString: true});
+  
+  
   if (shouldFetchProducts(getState(), filters)) {
     // dispatch(toggleFilter(filters.config.id, filters.config.field, filters.query))
     dispatch(fetchProducts(filters, getState().outcome))
-    if(getState().outcome.data !== []){
-    dispatch(urlChange(`${queryFilters ? '?'+queryFilters: ''}`))
-    }
   }
 }

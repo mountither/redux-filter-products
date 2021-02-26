@@ -15,7 +15,6 @@ function* initApp(action) {
     const queryURL = qs.parse(window.location.search,{parseNumbers: true, arrayFormat: 'comma'});
     // const urlString = qs.stringify(window.location.search, {arrayFormat: 'comma', skipNull: true, skipEmptyString: true})
 
-    const queryToServer = qs.exclude(window.location.search, ['page']);
     const pageNo = parseInt(queryURL.page) || 1;
 
     // create an array of the items found in url.
@@ -40,7 +39,6 @@ function* initApp(action) {
     }        
 
     yield put(fetchProductsIfNeeded({
-        // query: queryToServer,
         config: {
             skip: 0,
             limit: 4 * pageNo,

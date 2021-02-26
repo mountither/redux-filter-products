@@ -132,13 +132,12 @@ export const outcome = (state = {
             // console.log('ACT OLD STATE',state);
             return action.oldState && Object.keys(action.oldState).length ? action.oldState : state;
         case 'URL_CHANGE':
-        //     console.log('STATE IN URL CHNA',state);
-            if(action.url && window.history){
+            console.log('STATE IN URL CHNA',action.url);
+            if(window.history){
                 // history.push({pathname: '/products', search: action.url, state:state})
-                window.history.pushState({state: {...state}}, '', action.url)
+                window.history.pushState({state: state}, '', `/products/${action.url ? '?'+action.url: ''}`)
             }
             return state
-       
 
         default:
         return state

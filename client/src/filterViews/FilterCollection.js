@@ -4,7 +4,7 @@ import CheckboxFilter from './CheckboxFilter'
 import {useSelector, useDispatch} from 'react-redux'
 import {increment} from '../actions-example'
 import { Checkbox} from 'antd';
-import { toggleFilter,fetchProductsIfNeeded, initFilters, browserChange} from '../actions';
+import { toggleFilter,fetchProductsIfNeeded, initFilters, browserChange, fetchProducts} from '../actions';
 import { Link, useHistory, useLocation, Redirect} from 'react-router-dom'
 import 'antd/dist/antd.css'
 import { LoadingOutlined } from '@ant-design/icons';
@@ -107,16 +107,14 @@ const FilterCollection = () =>{
     //   config: {skip: 0, limit: viewLimit, page: resetPageNo,
     // }
     // }));
-
     dispatch({type:"INIT_PRODUCTS"});
-
-      window.onpopstate = (e) => {
+    window.onpopstate = (e) => {
         // console.log(e.currentTarget.location.search)
-          // if(e.state !== null){
+          if(e.state !== null){
             dispatch(browserChange(e.state.state))
-          // }
-        
-      }
+          }
+    }
+
     }, []);
     
 
@@ -188,10 +186,10 @@ const FilterCollection = () =>{
 
 //           console.log('hist state !!!',history.state);
 
-//           // dispatch(browserChange(history.location.state))
+          // dispatch(browserChange(history.location.state))
 //           dispatch(browserChange(window.history.state))
 
-//           //dispatch(fetchProductsIfNeeded(window.location.search))
+          //dispatch(fetchProductsIfNeeded(window.location.search))
   
 //         }
 //     }
@@ -208,7 +206,7 @@ const FilterCollection = () =>{
     //   search: query.toString()
     // })
     
-    dispatch(fetchProductsIfNeeded({
+    dispatch(fetchProducts({
       params: queryToServer,
       config: {skip: meta.skip,
               limit: viewLimit,
@@ -277,7 +275,7 @@ const handleChange = (value, field) => {
   
 
   dispatch(fetchProductsIfNeeded({
-  config: {skip: 0, limit: viewLimit, page: pageNo
+  config: {skip: 0, limit: viewLimit, page: pageNo,
   }}));
 
   // the checkbox activ. is lagging due to prev store state. 
@@ -303,25 +301,35 @@ const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 const { Panel } = Collapse;
 
+const [activeParams, setActiveParams] = useState([]);
 
+useEffect(() => {
+  setActiveParams(
+    Object.keys(meta.params).filter(field =>
+      meta.params[field].length > 0)
+  )
+}, [filters])
 
 return (
        <>
         <Link to="/">Home</Link>
+        {console.log('PARAMS ACTIVe',activeParams)}
+
         {
           filters.map((type, i)=> {
             
             // if (type.field_name === "cat"){
-            //   console.log('obj reduce:', type.data.reduce((sum, next) => {return sum && next.active}))
-            // }
-            //type.input.some((sum)=>  sum.active )
-            console.log(meta.params[type.field_name].length>0? [type.field_name] : '')
-            return (
-                    <Collapse
-                    key={i}
-                      defaultActiveKey={meta.params[type.field_name].length>0 ? type.field_name : ''}
-                      className={meta.params[type.field_name].length>0 ? 'highlight-border': ''}
-                    >
+              //   console.log('obj reduce:', type.data.reduce((sum, next) => {return sum && next.active}))
+              // }
+              //type.input.some((sum)=>  sum.active )
+              // console.log(meta.params[type.field_name].length>0? [type.field_name] : '')
+              return (
+                <Collapse
+                key={i}
+                defaultActiveKey={activeParams}
+                className={activeParams.includes(type.field_name) ? 'highlight-border': ''}
+                >
+                      
           
                 {/* touched previous state tells whether either one  */}
                         <Panel header={type.title} 
