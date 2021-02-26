@@ -113,15 +113,17 @@ export const outcome = (state = {
         }
         case 'RECEIVE_PRODUCTS':
         // console.log('act in receive',Object.keys(action.meta.params)[0])
-        console.log('state parrams in recieve',state.meta.params);
+        console.log('state parrams in recieve',state.meta);
         return {
             ...state,
             meta: {
             count: action.meta.count,
-            page: action.meta.loadMore ? state.meta.page + 1 : action.meta.page,
-            skip: action.meta.loadMore ? action.meta.skip + action.meta.limit: 0,
+            // page: action.meta.loadMore ? state.meta.page + 1 : action.meta.page,
+            page: action.meta.page,
+            skip: action.meta.skip,
+            // skip: action.meta.loadMore ? action.meta.skip + state.meta.limit : 0,
             limit: action.meta.limit,
-            // loadMore: action.meta.loadMore,
+            loadMore: action.meta.loadMore,
             params: action.meta.params
             },
         //   filters: action.meta.ui,
@@ -138,6 +140,14 @@ export const outcome = (state = {
                 window.history.pushState({state: state}, '', `/products/${action.url ? '?'+action.url: ''}`)
             }
             return state
+        // case 'ADD_PAGE_NO':
+        //     console.log('STATE IN URL CHNA',action.url);
+        //     if(window.history){
+        //         // history.push({pathname: '/products', search: action.url, state:state})
+        //         window.history.replaceState({state: state}, '', `/products/${action.url ? '?'+action.url: ''}`)
+        //     }
+        //     return state
+
 
         default:
         return state

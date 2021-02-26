@@ -1,5 +1,4 @@
 import qs from 'query-string'
-import { actionChannel } from 'redux-saga/effects';
 import history from '../utils/history'
 
 
@@ -60,7 +59,6 @@ export const fetchProducts = (filters, state) => (dispatch) => {
 
     //dispatch a request for products
     dispatch(requestProducts(filters))
-
     // fetch the json product from server - port 8000
     return fetch(queryToServer)
     .then(response => response.json())
@@ -74,8 +72,9 @@ export const fetchProducts = (filters, state) => (dispatch) => {
         //             state: state
         // })
         console.log('QUERY FILT ',queryFilters);
-        dispatch(urlChange(queryFilters))
 
+        dispatch(urlChange(queryFilters));
+        
         console.log('HISTORY!! ',window.history);
 
     }).catch(error => console.log(error))
@@ -106,7 +105,6 @@ export const fetchProductsIfNeeded = (filters) => (dispatch, getState) => {
   // the getState arg is retreived from the state inside component
   // at the time of this fn's execution.
   // console.log('filters',filters);
-  
   
   if (shouldFetchProducts(getState(), filters)) {
     // dispatch(toggleFilter(filters.config.id, filters.config.field, filters.query))

@@ -14,7 +14,6 @@ import qs from 'query-string'
 
 let render = 1;
 
-const viewLimit = 4;
 const resetPageNo = 1;
 
 const FilterCollection = () =>{
@@ -206,29 +205,32 @@ const FilterCollection = () =>{
     //   search: query.toString()
     // })
     
-    dispatch(fetchProducts({
+    dispatch(fetchProductsIfNeeded({
       params: queryToServer,
-      config: {skip: meta.skip,
-              limit: viewLimit,
-              page: meta.page,
-              loadMore: true}}))
+      config: {
+              skip: meta.skip + meta.limit,
+              limit: meta.limit,
+              page: meta.page + 1,
+              loadMore: true
+            }
+            }))
     // dispatch(urlChange(query.toString()))
   }
 
-  useEffect(()=>{
+  // useEffect(()=>{
 
-    if(didMount){
-      return 
-    }
+  //   if(didMount){
+  //     return 
+  //   }
 
-    // query.set('page', meta.page)
-    qs.stringify({'page': meta.page})
-    // query.sort();
-    // pushParamToUrl();
-    // dispatch(urlChange(query.toString()))
+  //   // query.set('page', meta.page)
+  //   qs.stringify({'page': meta.page})
+  //   // query.sort();
+  //   // pushParamToUrl();
+  //   // dispatch(urlChange(query.toString()))
 
 
-  }, [meta.page])
+  // }, [meta.page])
 
 
 //  this vs saga (INIT_PRODUCTS)?
@@ -275,7 +277,7 @@ const handleChange = (value, field) => {
   
 
   dispatch(fetchProductsIfNeeded({
-  config: {skip: 0, limit: viewLimit, page: pageNo,
+  config: {skip: 0, limit: meta.limit, page: pageNo,
   }}));
 
   // the checkbox activ. is lagging due to prev store state. 
@@ -308,7 +310,7 @@ useEffect(() => {
     Object.keys(meta.params).filter(field =>
       meta.params[field].length > 0)
   )
-}, [filters])
+}, [meta.params])
 
 return (
        <>
@@ -330,7 +332,6 @@ return (
                 className={activeParams.includes(type.field_name) ? 'highlight-border': ''}
                 >
                       
-          
                 {/* touched previous state tells whether either one  */}
                         <Panel header={type.title} 
                         key={type.field_name}>
