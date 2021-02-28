@@ -9,10 +9,15 @@ export const toggleFilter = (id, name, deselect) => ({
   deselect: deselect
 });
 
-const urlChange = (url) => ({
-  type:"URL_CHANGE",
+const urlChange = (url, loadMore) => ({
+  type: loadMore ? "ADD_PAGE_NO" : "URL_CHANGE",
   url: url,
 })
+
+// const pageChange = (url) => ({
+//   type:"ADD_PAGE_NO",
+//   url: url,
+// })
 
 export const clearFilters = () => ({
   type: 'CLEAR_FILTERS'
@@ -43,7 +48,7 @@ export const receiveProducts = (json, filters, results) =>({
     skip: filters.config.skip,
     loadMore: filters.config.loadMore,
     page: filters.config.page,
-    params: results.meta.params
+    params: results.meta.params,
   }
 });
 
@@ -71,11 +76,11 @@ export const fetchProducts = (filters, state) => (dispatch) => {
         //             search: `${queryFilters ? '?'+queryFilters: ''}`, 
         //             state: state
         // })
-        console.log('QUERY FILT ',queryFilters);
+        console.log('QUERY FILT ',state.meta.params);
 
-        dispatch(urlChange(queryFilters));
+        dispatch(urlChange(queryFilters, filters.config.loadMore))
+
         
-        console.log('HISTORY!! ',window.history);
 
     }).catch(error => console.log(error))
     // the recieved json objects need to be sent to 

@@ -6,15 +6,13 @@ import {increment} from '../actions-example'
 import { Checkbox} from 'antd';
 import { toggleFilter,fetchProductsIfNeeded, initFilters, browserChange, fetchProducts} from '../actions';
 import { Link, useHistory, useLocation, Redirect} from 'react-router-dom'
-import 'antd/dist/antd.css'
+import 'antd/dist/antd.dark.css'
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
-import {useDidMount} from "./utils/renderCheck";
 import qs from 'query-string'
+import {pageInit, limitInit} from '../initialisation'
 
 let render = 1;
-
-const resetPageNo = 1;
 
 const FilterCollection = () =>{
   const history = useHistory()
@@ -26,10 +24,7 @@ const FilterCollection = () =>{
   const queryToServer = qs.exclude(window.location.search, ['page']);
   const parsedQuery = qs.parse(window.location.search,{parseNumbers: true, arrayFormat: 'comma'})
   const dispatch = useDispatch()
-  const didMount = useDidMount();
   const state = useSelector(state => state)
-  const pageNo = parseInt(parsedQuery.page) || 1;
-
   
   const {outcome} = state
   const {isFetching, filters, data, meta} = outcome 
@@ -107,13 +102,16 @@ const FilterCollection = () =>{
     // }
     // }));
     dispatch({type:"INIT_PRODUCTS"});
+
+    // window.history.replaceState({state: outcome}, '', ``)
+
     window.onpopstate = (e) => {
-        // console.log(e.currentTarget.location.search)
           if(e.state !== null){
             dispatch(browserChange(e.state.state))
           }
     }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     
 
@@ -132,6 +130,7 @@ const FilterCollection = () =>{
   // }, [meta.params])
 
   console.log('HISTORY!! ',window.history);
+
 
 // const [ locationKeys, setLocationKeys ] = useState([])
 
@@ -209,12 +208,11 @@ const FilterCollection = () =>{
       params: queryToServer,
       config: {
               skip: meta.skip + meta.limit,
-              limit: meta.limit,
+              limit: limitInit,
               page: meta.page + 1,
               loadMore: true
             }
-            }))
-    // dispatch(urlChange(query.toString()))
+      }));
   }
 
   // useEffect(()=>{
@@ -275,9 +273,8 @@ const handleChange = (value, field) => {
   dispatch(toggleFilter(value.id, field,
   value.active ? true : false,));
   
-
   dispatch(fetchProductsIfNeeded({
-  config: {skip: 0, limit: meta.limit, page: pageNo,
+  config: {skip: 0, limit: limitInit, page: pageInit,
   }}));
 
   // the checkbox activ. is lagging due to prev store state. 
@@ -306,17 +303,27 @@ const { Panel } = Collapse;
 const [activeParams, setActiveParams] = useState([]);
 
 useEffect(() => {
+
   setActiveParams(
     Object.keys(meta.params).filter(field =>
       meta.params[field].length > 0)
   )
+    
+
 }, [meta.params])
 
 return (
        <>
         <Link to="/">Home</Link>
         {console.log('PARAMS ACTIVe',activeParams)}
+      {/* {meta.success && */}
 
+      <div>
+        <Collapse
+          defaultActiveKey={activeParams}
+
+          // className={activeParams.includes(type.field_name) ? 'highlight-border': ''}
+        >
         {
           filters.map((type, i)=> {
             
@@ -326,16 +333,11 @@ return (
               //type.input.some((sum)=>  sum.active )
               // console.log(meta.params[type.field_name].length>0? [type.field_name] : '')
               return (
-                <Collapse
-                key={i}
-                defaultActiveKey={activeParams}
-                className={activeParams.includes(type.field_name) ? 'highlight-border': ''}
-                >
-                      
-                {/* touched previous state tells whether either one  */}
-                        <Panel header={type.title} 
-                        key={type.field_name}>
-                        {type.input.map((value, i) => {
+                        <Panel header={type.title}
+                          className={activeParams.includes(type.field_name) ? 'highlight-border': ''}
+                          // isActive={activeParams.includes(type.field_name) ? true : false}
+                          key={type.field_name}>
+                          {type.input.map((value, i) => {
                           return (
                             <Checkbox
                               key={i}
@@ -347,17 +349,16 @@ return (
                           })
                         }
                         </Panel>
-                    </Collapse>
-            
-                    )
-            })
+            )
+          })
         }
+        </Collapse>
 
-       <Spin indicator={antIcon} spinning={isFetching} delay={500} tip={"Fetching Products"}/>
+      
 
-          <div >
+        <Spin indicator={antIcon} spinning={isFetching} delay={500} tip={"Fetching Products"}/>
             {!isFetching && <div>Amount of products {meta.count}</div>}
-            {meta.count == 0  && <div>No products to show</div>}
+            {meta.count === 0  && <div>No products to show</div>}
             {
             data.map(
                 (p,i) => { return (
@@ -366,6 +367,7 @@ return (
                         <div className="tiles-item-inner center-content">
                         <img 
                             // src={p.image}
+                            alt={p.name}
                             style={{width: "300px", height:'300px',}}
                             />
                         <div className="products-item-content">
@@ -380,11 +382,13 @@ return (
                     }
                 )
             }
-        </div>
-        {!data[meta.count - 1] && !isFetching &&
+        {!data[meta.count - 1] && !isFetching && meta.count > 0 &&
           <div className="center-content mt-32"><button onClick={onLoadMore}>Load More</button></div>
-          }   
+        }   
+      
+        </div>
 
+      {/* } */}
 </> 
 
     )

@@ -162,6 +162,12 @@ export const filterInfo = [{
 }
 ]
 
+export const allParams ={}
+filterInfo.map(filter => 
+    allParams[filter.field_name] = []
+);
+
+
 // const field = new schema.Entity('field')
 // const filter = new Schema('filter', { idAttribute: 'field_name'});
 // const input = new schema.Entity('input', undefined,  { 

@@ -2,6 +2,7 @@ import { takeEvery, put, select, all, call, fork } from 'redux-saga/effects';
 import { useLocation} from 'react-router-dom'
 import {fetchProductsIfNeeded, fetchProducts, initFilters,urlChange} from '../actions';
 import qs from "query-string";
+import {limitInit} from '../initialisation'
 
 // this solves the issue of taking query direct from the window location, 
 // rather than the redux router state.
@@ -41,8 +42,9 @@ function* initApp(action) {
     yield put(fetchProductsIfNeeded({
         config: {
             skip: 0,
-            limit: 4 * pageNo,
-            page: pageNo
+            limit: limitInit * pageNo,
+            page: pageNo,
+            success: false,
         }
     }))
 
