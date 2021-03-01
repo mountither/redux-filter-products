@@ -1,6 +1,6 @@
 import { takeEvery, put, select, all, call, fork } from 'redux-saga/effects';
 import { useLocation} from 'react-router-dom'
-import {fetchProductsIfNeeded, fetchProducts, initFilters,urlChange} from '../actions';
+import {fetchProductsIfNeeded, fetchProducts, initFilters, urlChange, receiveProducts, requestProducts} from '../actions';
 import qs from "query-string";
 import {limitInit} from '../initialisation'
 
@@ -39,27 +39,73 @@ function* initApp(action) {
         yield put(initFilters(queryURL))
     }        
 
-    yield put(fetchProductsIfNeeded({
-        config: {
-            skip: 0,
-            limit: limitInit * pageNo,
-            page: pageNo,
-            success: false,
-        }
-    }))
+    // yield put(fetchProductsIfNeeded({
+    //     config: {
+    //         skip: 0,
+    //         limit: limitInit * pageNo,
+    //         page: pageNo,
+    //         success: false,
+    //     }
+    // }))
 
+    yield put({type:'GET_PRODUCTS', filters: {
+            config: {
+                skip: 0,
+                limit: limitInit * pageNo,
+                page: pageNo,
+                initUrl: true
+            }
+    }})
 
     return;
 }
 
 
+export const getOutcome = (state) => state.outcome
 
+function* processProducts(action){
+    console.log('ACTION IN SAGA ',action.filters);
+    console.log('STATE IN SAGA ',yield select(getOutcome));
+
+    try {
+        let outcome = yield select(getOutcome);
+
+        const queryFilters = qs.stringify(outcome.meta.params,
+            {arrayFormat: 'comma', skipNull: true, skipEmptyString: true});
+
+        const json = yield call(getProducts, queryFilters,action.filters.config)
+
+        yield put(requestProducts())
+        yield put(receiveProducts(json, action.filters, outcome))
+        yield put(urlChange(queryFilters, action.filters.config.loadMore, action.filters.config.initUrl || false))
+
+    } catch (error) {
+        console.log(error);
+    }
+
+}
+
+const getProducts = (query, config) =>{
+    
+
+    const url = `${process.env.REACT_APP_SERVER}:8000/api/products/?${query}&skip=${config.skip}&limit=${config.limit}`
+    
+    // `${queryFilters ? '?'+queryFilters: ''}`
+    const queryToServer = qs.exclude(url, ['page']);
+
+    return fetch(queryToServer)
+        .then(response => response.json())
+
+}
 
 
 //this the watcher in middleware. 
 // focuses on action "INIT_APP".
+// watcher saga will include other actions ('REQUEST_PRODUCTS') 
 function* mySaga() {
     yield takeEvery("INIT_PRODUCTS", initApp);
+    yield takeEvery("GET_PRODUCTS", processProducts);
+
 }
 
 export default mySaga;

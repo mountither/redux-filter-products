@@ -27,7 +27,6 @@ export const outcome = (state = initState, action) => {
                 meta: {
                 ...state.meta,
                 params: {...state.meta.params, ...updatedParams},
-                status: 'INITIALISING_UI',
                 },
                 filters: state.filters.map( filter => {
                     const foundField = Object.keys(action.urlFilters).find(field => 
@@ -95,11 +94,6 @@ export const outcome = (state = initState, action) => {
             return {
                 ...state,
                 isFetching: true,
-                meta:{
-                    ...state.meta,
-                    status: 'REQUESTING',
-                    
-                }
             }
         case 'RECEIVE_PRODUCTS':
             // console.log('act in receive',Object.keys(action.meta.params)[0])
@@ -116,7 +110,6 @@ export const outcome = (state = initState, action) => {
                     limit: action.meta.limit,
                     loadMore: action.meta.loadMore,
                     params: action.meta.params,
-                    status: 'FETCHED',
                 },
             //   filters: action.meta.ui,
                 isFetching: false,
@@ -128,16 +121,16 @@ export const outcome = (state = initState, action) => {
         case 'URL_CHANGE':
             if(window.history){
                 // history.push({pathname: '/products', search: action.url, state:state})
-                console.log('PUSHED INTO HIST!!', state, action.type);
-                
-                if(action.url){
-                    console.log('WITH ACTION URL!!');
-                    //  push state keeps old entry in browser. non-mutated state
-                    window.history.pushState({state: state}, '', `?${action.url}`)
-                }
+                console.log('PUSHED INTO HIST!!', state, action);
+                //  push state keeps old entry in browser. non-mutated state
+
+                if(!action.initUrl){
+
+                    window.history.pushState({state: state}, '', `/products/?${action.url}`)
+                }   
                 else{
                     //  when the page loads without 
-                    window.history.replaceState({state: state}, '', '/products/')
+                    window.history.replaceState({state: state}, '',  `/products/${action.url ? '?'+ action.url: ''}`)
 
                 }
             
@@ -148,9 +141,9 @@ export const outcome = (state = initState, action) => {
         case 'ADD_PAGE_NO':
             console.log('STATE IN URL CHNA',action.url);
             if(window.history){
-                console.log('INSIDE ADD PAGE NUMBER !!!!');
+
                 // window.history.replaceState({state: state}, '', `?${action.url ? action.url+'&' : ''}${'page='+state.meta.page}`)
-                window.history.replaceState({state: state}, '', `?${action.url ? action.url+'&': ''}page=${state.meta.page}`)
+                window.history.replaceState({state: state}, '', `/products/?${action.url ? action.url+'&': ''}page=${state.meta.page}`)
             }
             return state
 

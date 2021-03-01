@@ -207,15 +207,25 @@ const FilterCollection = () =>{
     //   search: query.toString()
     // })
     
-    dispatch(fetchProductsIfNeeded({
-      params: queryToServer,
+    // dispatch(fetchProductsIfNeeded({
+    //   config: {
+    //           skip: meta.skip + meta.limit,
+    //           limit: limitInit,
+    //           page: meta.page + 1,
+    //           loadMore: true
+    //         }
+    //   }));
+
+
+    dispatch({type:'GET_PRODUCTS', filters: {
       config: {
-              skip: meta.skip + meta.limit,
-              limit: limitInit,
-              page: meta.page + 1,
-              loadMore: true
-            }
-      }));
+                  skip: meta.skip + meta.limit,
+                  limit: limitInit,
+                  page: meta.page + 1,
+                  loadMore: true
+                }
+          }});
+          
   // dispatch(urlManipulation(true))
 
   }
@@ -278,10 +288,12 @@ const handleChange = (value, field) => {
   dispatch(toggleFilter(value.id, field,
   value.active ? true : false,));
   
-  dispatch(fetchProductsIfNeeded({
-  config: {skip: 0, limit: limitInit, page: pageInit,
-  }}));
+  // dispatch(fetchProductsIfNeeded({
+  // config: {skip: 0, limit: limitInit, page: pageInit,
+  // }}));
 
+  dispatch({type:'GET_PRODUCTS', filters: {
+    config: {skip: 0, limit: limitInit, page: pageInit,}}});
  
   // the checkbox activ. is lagging due to prev store state. 
   // console.log('activity for ', field, value.id, value.active)
@@ -328,7 +340,7 @@ return (
 
           // className={activeParams.includes(type.field_name) ? 'highlight-border': ''}
         >
-        {
+        { filters &&
           filters.map((type, i)=> {
             
             // if (type.field_name === "cat"){
@@ -364,9 +376,9 @@ return (
       
 
         <Spin indicator={antIcon} spinning={isFetching} delay={500} tip={"Fetching Products"}/>
-            {!isFetching && meta.count > 0 && <div>Amount of products {meta.count}</div>}
+            {!isFetching && meta.count > 0 && <div style={{position: 'absolute', margin: '0 auto', width: '50%'}}>Amount of products {meta.count}</div>}
             {meta.count === 0  && <div>No products to show</div>}
-            {
+            { data &&
             data.map(
                 (p,i) => { return (
                   
@@ -389,7 +401,7 @@ return (
                     }
                 )
             }
-        {!data[meta.count - 1] && !isFetching && meta.count > 0 &&
+        {data && !data[meta.count - 1] && !isFetching && meta.count > 0 &&
           <div className="center-content mt-32"><button onClick={onLoadMore}>Load More</button></div>
         }   
       

@@ -9,9 +9,10 @@ export const toggleFilter = (id, name, deselect) => ({
   deselect: deselect
 });
 
-const urlChange = (url, loadMore) => ({
+export const urlChange = (url, loadMore, initUrl) => ({
   type: loadMore ? "ADD_PAGE_NO" : "URL_CHANGE",
   url: url,
+  initUrl: initUrl
 })
 
 // const pageChange = (url) => ({
@@ -78,7 +79,7 @@ export const fetchProducts = (filters, state) => (dispatch) => {
         // })
         console.log('QUERY FILT ',state.meta.params);
 
-        dispatch(urlChange(queryFilters, filters.config.loadMore))
+        // dispatch(urlChange(queryFilters, filters.config.loadMore))
 
     })
     .catch(error => console.log(error))
