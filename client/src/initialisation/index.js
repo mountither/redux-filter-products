@@ -10,7 +10,7 @@ export const initState = {
       page: 1,
       loadMore: false,
       params: allParams,
-      success: false,
+      status: 'INIT',
 }
 }
 

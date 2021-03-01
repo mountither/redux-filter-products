@@ -26,8 +26,8 @@ export const outcome = (state = initState, action) => {
                 ...state,
                 meta: {
                 ...state.meta,
-                params: {...state.meta.params, ...updatedParams}
-                    
+                params: {...state.meta.params, ...updatedParams},
+                status: 'INITIALISING_UI',
                 },
                 filters: state.filters.map( filter => {
                     const foundField = Object.keys(action.urlFilters).find(field => 
@@ -68,7 +68,8 @@ export const outcome = (state = initState, action) => {
                     ...state.meta.params,
                     [action.field]: action.deselect ? state.meta.params[action.field].filter(input => input != action.id)
                     : [...state.meta.params[action.field], action.id]
-                }
+                },
+                status: 'TOGGLING_UI',
                 },
                 filters: state.filters.map((filter) =>{
                 if(filter.field_name === action.field){
@@ -94,6 +95,11 @@ export const outcome = (state = initState, action) => {
             return {
                 ...state,
                 isFetching: true,
+                meta:{
+                    ...state.meta,
+                    status: 'REQUESTING',
+                    
+                }
             }
         case 'RECEIVE_PRODUCTS':
             // console.log('act in receive',Object.keys(action.meta.params)[0])
@@ -110,7 +116,7 @@ export const outcome = (state = initState, action) => {
                     limit: action.meta.limit,
                     loadMore: action.meta.loadMore,
                     params: action.meta.params,
-                    success: true,
+                    status: 'FETCHED',
                 },
             //   filters: action.meta.ui,
                 isFetching: false,
@@ -122,8 +128,8 @@ export const outcome = (state = initState, action) => {
         case 'URL_CHANGE':
             if(window.history){
                 // history.push({pathname: '/products', search: action.url, state:state})
-                console.log('PUSHED INTO HIST!!', state, action.url);
-
+                console.log('PUSHED INTO HIST!!', state, action.type);
+                
                 if(action.url){
                     console.log('WITH ACTION URL!!');
                     //  push state keeps old entry in browser. non-mutated state

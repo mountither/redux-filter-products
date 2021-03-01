@@ -4,7 +4,7 @@ import CheckboxFilter from './CheckboxFilter'
 import {useSelector, useDispatch} from 'react-redux'
 import {increment} from '../actions-example'
 import { Checkbox} from 'antd';
-import { toggleFilter,fetchProductsIfNeeded, initFilters, browserChange, fetchProducts} from '../actions';
+import { toggleFilter,fetchProductsIfNeeded, urlManipulation, browserChange, fetchProducts} from '../actions';
 import { Link, useHistory, useLocation, Redirect} from 'react-router-dom'
 import 'antd/dist/antd.dark.css'
 import { LoadingOutlined } from '@ant-design/icons';
@@ -13,6 +13,8 @@ import qs from 'query-string'
 import {pageInit, limitInit} from '../initialisation'
 
 let render = 1;
+
+const { Panel } = Collapse;
 
 const FilterCollection = () =>{
   const history = useHistory()
@@ -106,6 +108,7 @@ const FilterCollection = () =>{
     // window.history.replaceState({state: outcome}, '', ``)
 
     window.onpopstate = (e) => {
+      console.log('pop');
           if(e.state !== null){
             dispatch(browserChange(e.state.state))
           }
@@ -213,6 +216,8 @@ const FilterCollection = () =>{
               loadMore: true
             }
       }));
+  // dispatch(urlManipulation(true))
+
   }
 
   // useEffect(()=>{
@@ -277,6 +282,7 @@ const handleChange = (value, field) => {
   config: {skip: 0, limit: limitInit, page: pageInit,
   }}));
 
+ 
   // the checkbox activ. is lagging due to prev store state. 
   // console.log('activity for ', field, value.id, value.active)
 
@@ -298,29 +304,27 @@ const handleChange = (value, field) => {
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
-const { Panel } = Collapse;
 
 const [activeParams, setActiveParams] = useState([]);
-
+console.log('active params', activeParams);
 useEffect(() => {
 
   setActiveParams(
     Object.keys(meta.params).filter(field =>
       meta.params[field].length > 0)
   )
-    
-
 }, [meta.params])
+
 
 return (
        <>
         <Link to="/">Home</Link>
-        {console.log('PARAMS ACTIVe',activeParams)}
-      {/* {meta.success && */}
-
-      <div>
+        {/* {console.log('PARAMS ACTIVe',`${Math.floor((Math.random() * 1000))}-min`)} */}
+      {/* {meta.status === 'FETCHED' && */}
         <Collapse
-          defaultActiveKey={activeParams}
+          // key={activeParams}
+          
+          // defaultActiveKey={activeParams}
 
           // className={activeParams.includes(type.field_name) ? 'highlight-border': ''}
         >
@@ -333,31 +337,34 @@ return (
               //type.input.some((sum)=>  sum.active )
               // console.log(meta.params[type.field_name].length>0? [type.field_name] : '')
               return (
-                        <Panel header={type.title}
-                          className={activeParams.includes(type.field_name) ? 'highlight-border': ''}
-                          // isActive={activeParams.includes(type.field_name) ? true : false}
-                          key={type.field_name}>
-                          {type.input.map((value, i) => {
-                          return (
-                            <Checkbox
-                              key={i}
-                              onChange={() => {handleChange(value, type.field_name)}}
-                              checked={value.active}>
-                              {value.name}
-                            </Checkbox>
-                            )
-                          })
+                      <Panel 
+                        header={type.title}
+                        className={activeParams.includes(type.field_name) ? 'highlight-border': ''}
+                        // isActive={activeParams.includes(type.field_name) ? true : false}
+                        key={type.field_name}
+                        >
+
+                        {type.input.map((value, i) => {
+                        return (
+                          <Checkbox
+                            key={i}
+                            onChange={() => handleChange(value, type.field_name)}
+                            checked={value.active}>
+                            {value.name}
+                          </Checkbox>
+                          )
+                        })
                         }
-                        </Panel>
+                      </Panel>
             )
           })
         }
         </Collapse>
-
+  {/* } */}
       
 
         <Spin indicator={antIcon} spinning={isFetching} delay={500} tip={"Fetching Products"}/>
-            {!isFetching && <div>Amount of products {meta.count}</div>}
+            {!isFetching && meta.count > 0 && <div>Amount of products {meta.count}</div>}
             {meta.count === 0  && <div>No products to show</div>}
             {
             data.map(
@@ -386,9 +393,7 @@ return (
           <div className="center-content mt-32"><button onClick={onLoadMore}>Load More</button></div>
         }   
       
-        </div>
-
-      {/* } */}
+      
 </> 
 
     )

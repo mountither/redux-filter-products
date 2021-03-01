@@ -54,6 +54,8 @@ function* initApp(action) {
 
 
 
+
+
 //this the watcher in middleware. 
 // focuses on action "INIT_APP".
 function* mySaga() {

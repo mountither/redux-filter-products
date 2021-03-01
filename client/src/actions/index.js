@@ -80,13 +80,22 @@ export const fetchProducts = (filters, state) => (dispatch) => {
 
         dispatch(urlChange(queryFilters, filters.config.loadMore))
 
-        
-
-    }).catch(error => console.log(error))
+    })
+    .catch(error => console.log(error))
     // the recieved json objects need to be sent to 
     // dispatched to recieveProducts
 
 }
+
+// export const urlManipulation = (loadMore) => (dispatch, getState) => {
+
+
+//   const queryFilters = qs.stringify(getState().outcome.meta.params,
+//     {arrayFormat: 'comma', skipNull: true, skipEmptyString: true});
+
+//     dispatch(urlChange(queryFilters, loadMore))
+
+// }
 
 export const shouldFetchProducts = (state, filters) => {
   // get the state of specific subreddit. 
