@@ -2,12 +2,9 @@ import { applyMiddleware, compose, createStore } from "redux";
 import createSagaMiddleware from "redux-saga";
 import mySaga from '../saga'
 import allReducers from "../reducers";
-import thunk from 'redux-thunk'
 import { createLogger } from 'redux-logger'
-import history from '../utils/history'
 
-
-const middleware = [ thunk ]
+const middleware = []
 if (process.env.NODE_ENV !== 'production') {
     middleware.push(createLogger());
 }
@@ -22,11 +19,5 @@ const store = createStore(allReducers,
     );
     
 sagaMiddleware.run(mySaga);
-
-
-// console.log(history);
-// if(history.location.pathname == '/products/'){
-//     store.dispatch({type:"INIT_PRODUCTS"});
-// }
 
 export default store;

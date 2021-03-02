@@ -1,16 +1,16 @@
 import React, {useState, useEffect, useLayoutEffect} from "react";
-import { Collapse } from 'antd';
+import { Collapse, Spin, Button} from 'antd';
 import CheckboxFilter from './CheckboxFilter'
 import {useSelector, useDispatch} from 'react-redux'
 import {increment} from '../actions-example'
 import { Checkbox} from 'antd';
-import { toggleFilter,fetchProductsIfNeeded, urlManipulation, browserChange, fetchProducts} from '../actions';
+import { toggleFilter,fetchProductsIfNeeded, urlManipulation, browserChange, fetchProducts, clearFilters} from '../actions';
 import { Link, useHistory, useLocation, Redirect} from 'react-router-dom'
 import 'antd/dist/antd.dark.css'
 import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
 import qs from 'query-string'
 import {pageInit, limitInit} from '../initialisation'
+
 
 let render = 1;
 
@@ -23,8 +23,6 @@ const FilterCollection = () =>{
 
 
   // const queryURL = qs.parse(history.location.search, {parseNumbers: true, arrayFormat:'comma'})
-  const queryToServer = qs.exclude(window.location.search, ['page']);
-  const parsedQuery = qs.parse(window.location.search,{parseNumbers: true, arrayFormat: 'comma'})
   const dispatch = useDispatch()
   const state = useSelector(state => state)
   
@@ -103,6 +101,7 @@ const FilterCollection = () =>{
     //   config: {skip: 0, limit: viewLimit, page: resetPageNo,
     // }
     // }));
+
     dispatch({type:"INIT_PRODUCTS"});
 
     // window.history.replaceState({state: outcome}, '', ``)
@@ -116,9 +115,6 @@ const FilterCollection = () =>{
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    
-
-  console.log('PARSE fasD q', parsedQuery)
 
   // useEffect(()=> {
   
@@ -207,6 +203,8 @@ const FilterCollection = () =>{
     //   search: query.toString()
     // })
     
+
+    // USING THUNK DIRECTLY HERE
     // dispatch(fetchProductsIfNeeded({
     //   config: {
     //           skip: meta.skip + meta.limit,
@@ -216,16 +214,16 @@ const FilterCollection = () =>{
     //         }
     //   }));
 
-
-    dispatch({type:'GET_PRODUCTS', filters: {
+    // WATCHED AND MANIPULATED IN REDUX SAGA BEFORE REDUCER
+    dispatch({type:'GET_PRODUCTS', 
       config: {
                   skip: meta.skip + meta.limit,
                   limit: limitInit,
                   page: meta.page + 1,
                   loadMore: true
                 }
-          }});
-          
+          });
+
   // dispatch(urlManipulation(true))
 
   }
@@ -281,10 +279,6 @@ const handleChange = (value, field) => {
 
   // pushParamToUrl(qs.stringify(Filtered, {arrayFormat: 'comma'}));
 
- 
-  
-
-
   dispatch(toggleFilter(value.id, field,
   value.active ? true : false,));
   
@@ -292,8 +286,8 @@ const handleChange = (value, field) => {
   // config: {skip: 0, limit: limitInit, page: pageInit,
   // }}));
 
-  dispatch({type:'GET_PRODUCTS', filters: {
-    config: {skip: 0, limit: limitInit, page: pageInit,}}});
+  dispatch({type:'GET_PRODUCTS', 
+    config: {skip: 0, limit: limitInit, page: pageInit,}});
  
   // the checkbox activ. is lagging due to prev store state. 
   // console.log('activity for ', field, value.id, value.active)
@@ -331,6 +325,8 @@ useEffect(() => {
 return (
        <>
         <Link to="/">Home</Link>
+
+        <Button onClick={()=>dispatch(clearFilters())}>Clear All</Button>
         {/* {console.log('PARAMS ACTIVe',`${Math.floor((Math.random() * 1000))}-min`)} */}
       {/* {meta.status === 'FETCHED' && */}
         <Collapse

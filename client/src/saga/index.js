@@ -8,7 +8,7 @@ import {limitInit} from '../initialisation'
 // rather than the redux router state.
 // when the init_app dispatch is used, the router values will be present,
 // we can alter and add the necessary values with this method.
-function* initApp(action) {
+function* initProductsPage() {
     // url location is extracted (select) from the state.router 
 
     // const params = new URLSearchParams(window.location.search);
@@ -48,14 +48,14 @@ function* initApp(action) {
     //     }
     // }))
 
-    yield put({type:'GET_PRODUCTS', filters: {
+    yield put({type:'GET_PRODUCTS', 
             config: {
                 skip: 0,
                 limit: limitInit * pageNo,
                 page: pageNo,
-                initUrl: true
+                initUrl: true,
             }
-    }})
+    })
 
     return;
 }
@@ -64,22 +64,37 @@ function* initApp(action) {
 export const getOutcome = (state) => state.outcome
 
 function* processProducts(action){
-    console.log('ACTION IN SAGA ',action.filters);
-    console.log('STATE IN SAGA ',yield select(getOutcome));
+    console.log('ACTION IN SAGA ',action);
+    // console.log('STATE IN SAGA ',yield select(getOutcome));
 
     try {
+        // get the current state 
         let outcome = yield select(getOutcome);
-
+        // strigfy the params found in state and send in url change
         const queryFilters = qs.stringify(outcome.meta.params,
             {arrayFormat: 'comma', skipNull: true, skipEmptyString: true});
+        //call getProducts to return response. 
+        const response = yield call(getProducts, queryFilters, action.config)
+        console.log(response);
+        // check if success. if so, dispatch actions
+        if (response.status >= 200 && response.status < 300) {    
+            const products = yield response.json()
+            yield put(requestProducts())
+            yield put(receiveProducts(products, action.config, outcome))
+            yield put(urlChange(queryFilters, {
+                    urlConfig: 
+                        {
+                            loadMore: action.config.loadMore, 
+                            initUrl: action.config.initUrl
+                        }
+                    }))
+        }
+        else{
+            throw response.statusText;
+        }
 
-        const json = yield call(getProducts, queryFilters,action.filters.config)
-
-        yield put(requestProducts())
-        yield put(receiveProducts(json, action.filters, outcome))
-        yield put(urlChange(queryFilters, action.filters.config.loadMore, action.filters.config.initUrl || false))
-
-    } catch (error) {
+    } 
+    catch (error) {
         console.log(error);
     }
 
@@ -92,10 +107,8 @@ const getProducts = (query, config) =>{
     
     // `${queryFilters ? '?'+queryFilters: ''}`
     const queryToServer = qs.exclude(url, ['page']);
-
     return fetch(queryToServer)
-        .then(response => response.json())
-
+        .then(response => response)
 }
 
 
@@ -103,7 +116,7 @@ const getProducts = (query, config) =>{
 // focuses on action "INIT_APP".
 // watcher saga will include other actions ('REQUEST_PRODUCTS') 
 function* mySaga() {
-    yield takeEvery("INIT_PRODUCTS", initApp);
+    yield takeEvery("INIT_PRODUCTS", initProductsPage);
     yield takeEvery("GET_PRODUCTS", processProducts);
 
 }

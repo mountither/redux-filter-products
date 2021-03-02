@@ -118,35 +118,43 @@ export const outcome = (state = initState, action) => {
         case 'WINDOW_NAV':
             // console.log('ACT OLD STATE',state);
             return action.oldState && Object.keys(action.oldState).length ? action.oldState : state;
-        case 'URL_CHANGE':
+        case 'REGISTER_URL':
             if(window.history){
                 // history.push({pathname: '/products', search: action.url, state:state})
                 console.log('PUSHED INTO HIST!!', state, action);
+                console.log('OBJECT KEYS IN PARAMS',Object.keys(state.meta.params).some((filter) => state.meta.params[filter].length));
+
                 //  push state keeps old entry in browser. non-mutated state
 
                 if(!action.initUrl){
 
-                    window.history.pushState({state: state}, '', `/products/?${action.url}`)
+                    window.history.pushState({state: state}, '', `/products/${
+                        Object.keys(state.meta.params).some((filter) => state.meta.params[filter].length) 
+                        ? 
+                        '?'+action.url: ''}`)
                 }   
                 else{
                     //  when the page loads without 
-                    window.history.replaceState({state: state}, '',  `/products/${action.url ? '?'+ action.url: ''}`)
-
+                    window.history.replaceState({state: state}, '',  `/products/${
+                        action.url
+                        ?
+                        '?'+action.url: ''}`
+                    )
                 }
             
             }
             // after completing state manip. return current state. If not, the state will not be realised by other actions
             return state
 
-        case 'ADD_PAGE_NO':
+        case 'APPEND_PAGE_URL':
             console.log('STATE IN URL CHNA',action.url);
             if(window.history){
-
                 // window.history.replaceState({state: state}, '', `?${action.url ? action.url+'&' : ''}${'page='+state.meta.page}`)
                 window.history.replaceState({state: state}, '', `/products/?${action.url ? action.url+'&': ''}page=${state.meta.page}`)
             }
             return state
-
+        // case 'CLEAR_FILTERS':
+        //     return {...state, data: [], filters: []}
         default:
             return state
     }
