@@ -87,7 +87,6 @@ return (
                       <Panel 
                         header={type.title}
                         className={activeParams.includes(type.field_name) ? 'highlight-border': ''}
-                        // isActive={activeParams.includes(type.field_name) ? true : false}
                         key={type.field_name}
                         >
 
