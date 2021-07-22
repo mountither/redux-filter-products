@@ -65,7 +65,7 @@ export const getOutcome = (state) => state.outcome
 
 function* processProducts(action){
     console.log('ACTION IN SAGA ',action);
-    // console.log('STATE IN SAGA ',yield select(getOutcome));
+    console.log('STATE IN SAGA ',yield select(getOutcome));
 
     try {
         // get the current state 
@@ -75,7 +75,7 @@ function* processProducts(action){
             {arrayFormat: 'comma', skipNull: true, skipEmptyString: true});
         //call getProducts to return response. 
         const response = yield call(getProducts, queryFilters, action.config)
-        console.log(response);
+        // console.log(response);
         // check if success. if so, dispatch actions
         if (response.status >= 200 && response.status < 300) {    
             const products = yield response.json()

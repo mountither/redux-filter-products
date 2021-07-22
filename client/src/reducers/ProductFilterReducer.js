@@ -97,7 +97,7 @@ export const outcome = (state = initState, action) => {
             }
         case 'RECEIVE_PRODUCTS':
             // console.log('act in receive',Object.keys(action.meta.params)[0])
-            console.log('state parrams in recieve',state.meta);
+            // console.log('state parrams in recieve',state.meta);
             return {
                 ...state,
                 meta: {
@@ -121,8 +121,8 @@ export const outcome = (state = initState, action) => {
         case 'REGISTER_URL':
             if(window.history){
                 // history.push({pathname: '/products', search: action.url, state:state})
-                console.log('PUSHED INTO HIST!!', state, action);
-                console.log('OBJECT KEYS IN PARAMS',Object.keys(state.meta.params).some((filter) => state.meta.params[filter].length));
+                // console.log('PUSHED INTO HIST!!', state, action);
+                // console.log('OBJECT KEYS IN PARAMS',Object.keys(state.meta.params).some((filter) => state.meta.params[filter].length));
 
                 //  push state keeps old entry in browser. non-mutated state
 
@@ -147,7 +147,7 @@ export const outcome = (state = initState, action) => {
             return state
 
         case 'APPEND_PAGE_URL':
-            console.log('STATE IN URL CHNA',action.url);
+            // console.log('STATE IN URL CHNA',action.url);
             if(window.history){
                 // window.history.replaceState({state: state}, '', `?${action.url ? action.url+'&' : ''}${'page='+state.meta.page}`)
                 window.history.replaceState({state: state}, '', `/products/?${action.url ? action.url+'&': ''}page=${state.meta.page}`)

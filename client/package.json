@@ -21,7 +21,7 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "start-mac": "PORT=3006 REACT_APP_SERVER=http://192.168.0.65 react-scripts start",
+    "start-mac": "PORT=3006 REACT_APP_SERVER=http://localhost react-scripts start",
     "start-win": "set PORT=3006 && set REACT_APP_SERVER=http://192.168.0.14&& react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
