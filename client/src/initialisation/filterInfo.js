@@ -1,5 +1,3 @@
-// import { normalize, schema } from 'normalizr';
-
 export const filterInfo = [{
     id:1,
     title: 'Category',
@@ -166,18 +164,3 @@ export const allParams ={}
 filterInfo.map(filter => 
     allParams[filter.field_name] = []
 );
-
-
-// const field = new schema.Entity('field')
-// const filter = new Schema('filter', { idAttribute: 'field_name'});
-// const input = new schema.Entity('input', undefined,  { 
-//     idAttribute: (entity, parent) => (`${parent.id}.${entity.id}`)
-// })
-
-// const filter = new schema.Entity('filter', {
-//     input: [input]
-//     // field:field
-//   });
-
-// export const normalizedData = normalize(filterInfo, [filter]);
-// console.log('normalised', normalizedData);
