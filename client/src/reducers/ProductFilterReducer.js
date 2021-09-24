@@ -119,8 +119,9 @@ export const outcome = (state = initState, action) => {
                 window.history.replaceState({state: state}, '', `/products/?${action.url ? action.url+'&': ''}page=${state.meta.page}`)
             }
             return state
-        // case 'CLEAR_FILTERS':
-        //     return {...state, data: [], filters: []}
+        case 'CLEAR_FILTERS':
+            // return {...state, data: [], filters: []}
+            return initState
         default:
             return state
     }
